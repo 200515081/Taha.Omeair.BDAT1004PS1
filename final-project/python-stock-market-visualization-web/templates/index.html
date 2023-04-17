@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Market Visualization</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .blink-text {
+            color: red;
+            animation: blink 1s linear infinite;
+        }
+
+        .blink-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            background-color: red;
+            animation: blink 1s linear infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center my-5">Stock Market Visualization</h1>
+        <div class="text-center">
+            <h5>Top 5 Companies </h5>
+        </div>
+        <div class="row" id="companyList">
+            <!-- JavaScript will generate the company boxes here -->
+        </div>
+        <hr>
+        <form method="post">
+            <div class="form-group">
+                <label for="company">Enter a company ticker to get live data:</label>
+                <input type="text" class="form-control" id="company" name="stock"
+                    placeholder='"NVDA","META","ASML", "AVGO", "PEP", "AZN", "COST", "CSCO", "TMUS", "ADBE", "TXN", "CMCSA", "NFLX", "AMD", "QCOM"'>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+
+        </form>
+        <div class="text-center mt-5">
+            <h5>Recently viewed</h5>
+            <ul class="list-group">
+                {% for stock in stocks %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('stockGraph', stock=stock) }}">{{ stock }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <!-- Bootstrap JS CDN -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Array of top 5 companies 
+        const companies = [
+            { symbol: 'AMZN', name: 'Amazon.com, Inc.' },
+            { symbol: 'MSFT', name: 'Microsoft Corporation' },
+            { symbol: 'GOOG', name: 'Alphabet Inc.' },
+            { symbol: 'TSLA', name: 'Tesla, Inc.' },
+            { symbol: 'AAPL', name: 'Apple Inc.' }
+        ];
+
+        // Generate company boxes 
+        const companyList = document.getElementById('companyList');
+        companies.forEach(company => {
+            const col = document.createElement('div');
+            col.classList.add('col-sm-6', 'col-md-4', 'mb-4');
+            const link = document.createElement('a');
+            link.href = `/company/${company.symbol}`;
+            link.classList.add('card', 'text-white', 'bg-info');
+            const header = document.createElement('div');
+            header.classList.add('card-header');
+            header.innerHTML = `${company.name} <span class="blink-text">Live</span> <span class="blink-dot"></span>`;
+            const body = document.createElement('div');
+            body.classList.add('card-body');
+            const title = document.createElement('h5');
+            title.classList.add('card-title');
+            title.innerText = company.symbol;
+            body.appendChild(title);
+            link.appendChild(header);
+            link.appendChild(body);
+            col.appendChild(link);
+            companyList.appendChild(col);
+        }); 
+    </script>
+</body>
+
+</html>
